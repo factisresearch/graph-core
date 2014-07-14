@@ -5,12 +5,13 @@
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE RecordWildCards #-}
 module Data.Graph
-  ( Graph, Node, NodeSet, Edge(..)
+  ( Graph (..), Node, NodeSet, Edge(..)
   , empty, fromEdges, fromAdj, isConsistent
   , nodes, edges, children, parents, hasEdge
   , edgeCount
   , hull, rhull, hullFold, rhullFold
   , addEdge, addEdges, removeEdge, removeEdges
+  , edgesAdj
   )
 where
 
