@@ -31,7 +31,7 @@ test-suite graph-core-tests
   type:                exitcode-stdio-1.0
   hs-source-dirs:      src
   main-is:             Tests.hs
-  other-modules:       Test.NodeManager, Test.Core
+  other-modules:       Test.NodeManager, Test.Core, Test.Persistence
   build-depends:       base >=4.6 && <4.7,
                        hashable >=1.2 && <1.3,
                        unordered-containers >=0.2 && <0.3,
