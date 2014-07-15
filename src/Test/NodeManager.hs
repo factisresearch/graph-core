@@ -13,7 +13,7 @@ assertConsistent = get >>= liftIO . assertEqual True . isConsistent
 
 prop_init :: NodeMap String -> Property
 prop_init m = uniqueValues m && all (>=0) (IM.keys m)
-        ==> isConsistent new && m == nm_idxToNode new
+        ==> isConsistent new && m == nm_nodeToKey new
     where new = initNodeManager m
           uniqueValues im = IM.size im == length (L.nub $ IM.elems im)
 

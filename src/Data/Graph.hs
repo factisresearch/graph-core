@@ -5,22 +5,24 @@
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE RecordWildCards #-}
 module Data.Graph
-  ( Graph (..), Node, NodeSet, Edge(..)
+  ( Graph (..), Node, NodeSet, Edge(..), AdjList
   , empty, fromEdges, fromAdj, isConsistent
   , nodes, edges, children, parents, hasEdge
   , edgeCount
-  , hull, rhull, hullFold, rhullFold
+  , hull, rhull, hullFold, hullFoldM, rhullFold
   , addEdge, addEdges, removeEdge, removeEdges
+  , addNode, solitaireNodes
   , edgesAdj
   )
 where
 
-import Data.Graph.NodeManager hiding (isConsistent)
+import Data.Graph.NodeManager hiding (nodes, isConsistent)
 
 import Control.Applicative hiding (empty)
 import Control.Arrow
 import Control.DeepSeq
 import Control.Monad
+import Control.Monad.Identity
 import Control.Monad.ST
 import Data.Function (on)
 import Data.Hashable
@@ -90,13 +92,19 @@ fromEdges edgeList =
                         . L.sortBy (compare `on` src) $ e
 
 fromAdj :: [(Node, [Node])] -> Graph
-fromAdj = fromEdges . adjToEdges
+fromAdj l =
+    let g1 = fromEdges (adjToEdges l)
+        solitaires = map fst $ filter (\(_, xs) -> null xs) l
+    in L.foldl' (\g n -> g { g_adj = IM.insert n VU.empty (g_adj g) }) g1 solitaires
 
 nodes :: Graph -> [Node]
 nodes g = IM.keys (IM.union (g_adj g) (g_radj g))
 
 edges :: Graph -> [Edge]
 edges = edgesAdj . g_adj
+
+solitaireNodes :: Graph -> [Node]
+solitaireNodes g = IM.keys (IM.filter VU.null (IM.union (g_adj g) (g_radj g)))
 
 edgeCount :: Graph -> Int
 edgeCount = F.foldl' (\old (_,adj) -> old + VU.length adj) 0
@@ -113,6 +121,10 @@ neighbors (Graph{..}) adj x = IM.findWithDefault VU.empty x adj
 
 hasEdge :: Node -> Node -> Graph -> Bool
 hasEdge x y (Graph{..}) = y `VU.elem` IM.findWithDefault VU.empty x g_adj
+
+addNode :: Node -> Graph -> Graph
+addNode x g =
+    g { g_adj = IM.insertWith (\_new old -> old) x VU.empty (g_adj g) }
 
 addEdge :: Node -> Node -> Graph -> Graph
 addEdge x y g@(Graph{..}) =
@@ -154,24 +166,28 @@ hullImpl (Graph{..}) adj root =
           readSTRef vis
 
 rhullFold :: Graph -> (b -> Node -> b) -> b -> Node -> b
-rhullFold g = hullFoldImpl g (g_radj g)
+rhullFold g f initial node =
+    runIdentity $ hullFoldImpl (g_radj g) (\x y -> return (f x y)) initial node
 
+-- FIXME: benchmark against old hullFold implementation
 hullFold :: Graph -> (b -> Node -> b) -> b -> Node -> b
-hullFold g = hullFoldImpl g (g_adj g)
+hullFold g f initial node =
+    runIdentity $ hullFoldImpl (g_adj g) (\x y -> return (f x y)) initial node
 
-hullFoldImpl :: Graph -> AdjList -> (b -> Node -> b) -> b -> Node -> b
-hullFoldImpl (Graph{..}) adj f initial root =
-   runST $
-     do accRef <- newSTRef initial
-        vis <- newSTRef IS.empty
-        let go x =
-             (IS.member x <$> readSTRef vis) >>=
-                (flip unless $
-                   do modifySTRef' accRef (flip f x)
-                      modifySTRef' vis (IS.insert x)
-                      VU.forM_ (IM.findWithDefault VU.empty x adj) go)
-        go root
-        readSTRef accRef
+hullFoldM :: Monad m => Graph -> (b -> Node -> m b) -> b -> Node -> m b
+hullFoldM g = hullFoldImpl (g_adj g)
+
+hullFoldImpl :: Monad m => AdjList -> (b -> Node -> m b) -> b -> Node -> m b
+hullFoldImpl adj f initial root =
+    go IS.empty initial [root]
+    where
+      go _ acc [] = return acc
+      go !visited !acc (x:xs) =
+          if (IS.member x visited)
+          then go visited acc xs
+          else do newAcc <- f acc x
+                  let succs = IM.findWithDefault VU.empty x adj
+                  go (IS.insert x visited) newAcc (xs ++ VU.toList succs)
 
 instance Arbitrary Graph where
     arbitrary = frequency [(1, return empty), (20, denseGraph)]

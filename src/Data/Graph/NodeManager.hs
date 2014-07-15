@@ -7,7 +7,8 @@ module Data.Graph.NodeManager
     , emptyNode
     , initNodeManager, emptyNodeManager
     , getNodeHandle, getExistingNodeHandle, lookupNode, unsafeLookupNode
-    , getNewNodesSince, isConsistent
+    , getNewNodesSince, keys, hasKey, nodes, toList
+    , isConsistent
     )
 where
 
@@ -29,9 +30,9 @@ emptyNode = -1
 
 data NodeManager k
     = NodeManager
-    { nm_idxToNode :: !(NodeMap k)
-    , nm_nodeToIdx :: !(HM.HashMap k Node)
-    , nm_nextIdx :: !Node
+    { nm_nodeToKey :: !(NodeMap k)
+    , nm_keyToNode :: !(HM.HashMap k Node)
+    , nm_nextNode :: !Node
     } deriving (Show, Eq)
 
 swap :: forall a b. (a, b) -> (b, a)
@@ -39,24 +40,38 @@ swap (x,y) = (y,x)
 
 isConsistent :: (Ord k) => NodeManager k -> Bool
 isConsistent (NodeManager{..}) =
-    IM.size nm_idxToNode == HM.size nm_nodeToIdx
-    && (IM.null nm_idxToNode || (nm_nextIdx > fst (IM.findMax nm_idxToNode)
-                              && emptyNode < fst (IM.findMin nm_idxToNode)))
-    && L.sort (HM.toList nm_nodeToIdx) == L.sort (map swap (IM.toList nm_idxToNode))
+    IM.size nm_nodeToKey == HM.size nm_keyToNode
+    && (IM.null nm_nodeToKey || (nm_nextNode > fst (IM.findMax nm_nodeToKey)
+                              && emptyNode < fst (IM.findMin nm_nodeToKey)))
+    && L.sort (HM.toList nm_keyToNode) == L.sort (map swap (IM.toList nm_nodeToKey))
 
 -- map must contain only non-negative keys!
 initNodeManager :: (Hashable k, Eq k) => NodeMap k -> NodeManager k
 initNodeManager nm =
     case IM.minViewWithKey nm of
        Just ((n, _), _) | n <= emptyNode -> error $ "Invalid node ID: " ++ show n
-       _ -> NodeManager nm (invert nm) nextIdx
-    where nextIdx
+       _ -> NodeManager nm (invert nm) nextNode
+    where nextNode
             | IM.null nm = 0
             | otherwise = 1 + fst (IM.findMax nm)
           invert im = HM.fromList . map swap $ IM.toList im
 
+keys :: NodeManager k -> [k]
+keys nm =
+    HM.keys (nm_keyToNode nm)
+
+hasKey :: (Eq k, Hashable k) => k -> NodeManager k -> Bool
+hasKey k nm =
+    isJust $ HM.lookup k (nm_keyToNode nm)
+
+toList :: NodeManager k -> [(k, Node)]
+toList nm = HM.toList (nm_keyToNode nm)
+
+nodes :: NodeManager k -> [Node]
+nodes nm = IM.keys (nm_nodeToKey nm)
+
 getNewNodesSince :: Node -> NodeManager k -> NodeMap k
-getNewNodesSince n (NodeManager{..}) = snd $ IM.split n nm_idxToNode
+getNewNodesSince n (NodeManager{..}) = snd $ IM.split n nm_nodeToKey
 
 emptyNodeManager :: forall k. NodeManager k
 emptyNodeManager = NodeManager IM.empty HM.empty 0
@@ -64,21 +79,21 @@ emptyNodeManager = NodeManager IM.empty HM.empty 0
 getNodeHandle :: (Hashable k, Eq k, MonadState (NodeManager k) m) => k -> m Node
 getNodeHandle k =
     do NodeManager{..} <- get
-       case HM.lookup k nm_nodeToIdx of
+       case HM.lookup k nm_keyToNode of
           Just i -> return i
           Nothing ->
-            do let i = nm_nextIdx
-               put $ NodeManager { nm_idxToNode = IM.insert i k nm_idxToNode
-                                 , nm_nodeToIdx = HM.insert k i nm_nodeToIdx
-                                 , nm_nextIdx = i + 1
-                                 }
+            do let i = nm_nextNode
+               put $! NodeManager { nm_nodeToKey = IM.insert i k nm_nodeToKey
+                                  , nm_keyToNode = HM.insert k i nm_keyToNode
+                                  , nm_nextNode = i + 1
+                                  }
                return i
 
 getExistingNodeHandle :: (Hashable k, Eq k) => k -> NodeManager k -> Maybe Node
-getExistingNodeHandle k (NodeManager{..}) = HM.lookup k nm_nodeToIdx
+getExistingNodeHandle k (NodeManager{..}) = HM.lookup k nm_keyToNode
 
 lookupNode :: Node -> NodeManager k -> Maybe k
-lookupNode i (NodeManager{..}) = IM.lookup i nm_idxToNode
+lookupNode i (NodeManager{..}) = IM.lookup i nm_nodeToKey
 
 unsafeLookupNode :: Node -> NodeManager k -> k
 unsafeLookupNode i nm = fromJust $ lookupNode i nm

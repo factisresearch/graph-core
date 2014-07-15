@@ -52,9 +52,19 @@ test_hullFold =
        assertEqual 3 (hullFold testGraphB (+) 0 1)
 
 prop_fromEdgesAddEdges :: Graph -> Bool
-prop_fromEdgesAddEdges g = isConsistent new && new == g
-    where new = addEdges (edges g) empty
+prop_fromEdgesAddEdges g =
+    let isCons = isConsistent new
+        isEq = new == g
+    in if isCons && isEq
+       then True
+       else error ("g=" ++ show g ++ ", new=" ++ show new ++
+                   ", isCons=" ++ show isCons ++ ", isEq=" ++ show isEq)
+    where
+      new =
+          foldl (\g' n -> addNode n g') (addEdges (edges g) empty) (solitaireNodes g)
 
 prop_fromEdgesToEdges :: Graph -> Bool
 prop_fromEdgesToEdges g = isConsistent new && new == g
-    where new = fromEdges (edges g)
+    where
+      new =
+          foldl (\g' n -> addNode n g') (fromEdges (edges g)) (solitaireNodes g)
