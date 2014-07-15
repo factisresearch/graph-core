@@ -116,6 +116,19 @@ addNode :: Node -> Graph -> Graph
 addNode x g =
     g { g_adj = IM.insertWith (\_new old -> old) x VU.empty (g_adj g) }
 
+removeNode :: Node -> Graph -> Graph
+removeNode x g =
+    let rmInAdj adj localF =
+            foldl (\adjList child ->
+                       IM.adjust (VU.filter (/=x)) child adjList
+                  ) (IM.delete x adj) $ VU.toList (localF g x)
+
+        newAdj = rmInAdj (g_adj g) parents
+        newRAdj = rmInAdj (g_radj g) children
+    in g { g_adj = newAdj
+         , g_radj = newRAdj
+         }
+
 addEdge :: Node -> Node -> Graph -> Graph
 addEdge x y g@(Graph{..}) =
    if hasEdge x y g

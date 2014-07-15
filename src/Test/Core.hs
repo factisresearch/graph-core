@@ -30,6 +30,18 @@ test_removeEdges =
     do assertEqual (fromAdj [(1, [2]), (2, [3,4]), (3, [4]), (4, [])])
                    (removeEdges [e (1,3), e (4,1)] testGraphA)
 
+test_removeNode :: IO ()
+test_removeNode =
+    let orig = fromAdj [(1, [2]), (2, [3,4]), (3, [4]), (4, [])]
+        res1 = fromAdj [(1, [2]), (2, [3]), (3, [])]
+        res2 = fromAdj [(1, [2]), (2, [4]), (4, [])]
+        res3 = fromAdj [(1, []), (3, [4]), (4, [])]
+
+    in do assertEqual res1 (removeNode 4 orig)
+          assertEqual res2 (removeNode 3 orig)
+          assertEqual res3 (removeNode 2 orig)
+          assertEqual orig (removeNode 5 orig)
+
 test_hull :: IO ()
 test_hull =
     do assertEqual (IS.fromList [4]) (hull testGraphA 4)

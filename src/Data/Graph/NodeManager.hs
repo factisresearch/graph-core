@@ -7,6 +7,7 @@ module Data.Graph.NodeManager
     , emptyNode
     , initNodeManager, emptyNodeManager, getNodeMap
     , getNodeHandle, getExistingNodeHandle, lookupNode, unsafeLookupNode
+    , removeNodeHandle
     , getNewNodesSince, keys, hasKey, nodes, toList
     , isConsistent
     )
@@ -91,6 +92,15 @@ getNodeHandle k =
                                   , nm_nextNode = i + 1
                                   }
                return i
+
+removeNodeHandle :: (Hashable k, Eq k) => Node -> NodeManager k -> NodeManager k
+removeNodeHandle i nm@(NodeManager{..}) =
+    case IM.lookup i nm_nodeToKey of
+      Just k ->
+          nm { nm_nodeToKey = IM.delete i nm_nodeToKey
+             , nm_keyToNode = HM.delete k nm_keyToNode
+             }
+      Nothing -> nm
 
 getExistingNodeHandle :: (Hashable k, Eq k) => k -> NodeManager k -> Maybe Node
 getExistingNodeHandle k (NodeManager{..}) = HM.lookup k nm_keyToNode

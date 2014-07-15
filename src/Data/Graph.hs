@@ -11,7 +11,7 @@ module Data.Graph
   , edgeCount
   , hull, rhull, hullFold, hullFoldM, rhullFold
   , addEdge, addEdges, removeEdge, removeEdges
-  , addNode, solitaireNodes
+  , addNode, removeNode, solitaireNodes
   , edgesAdj
   )
 where
