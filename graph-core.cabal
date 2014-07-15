@@ -1,6 +1,7 @@
 name:                graph-core
 version:             0.1.0.0
 synopsis:            Fast, memory efficient and persistent graph implementation
+description:         A small package providing a powerful and easy to use Haskell graph implementation.
 homepage:            https://github.com/factisresearch/graph-core
 license:             MIT
 license-file:        LICENSE
