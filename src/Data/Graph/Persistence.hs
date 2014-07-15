@@ -1,7 +1,9 @@
 {-# LANGUAGE TemplateHaskell #-}
-module Data.Graph.Persistence where
+module Data.Graph.Persistence
+  ( PersistentGraph, persistGraph, loadGraph )
+where
 
-import Data.Graph
+import Data.Graph.PureCore
 import Data.Graph.NodeManager
 
 import Data.Hashable
@@ -13,12 +15,12 @@ data PersistentGraph k
    = PersistentGraph
    { pg_nodeData :: NodeMap k
    , pg_graphData :: [(Node, [Node])]
-   }
+   } deriving (Show, Eq)
 
 persistGraph :: (Eq k, Hashable k) => NodeManager k -> Graph -> PersistentGraph k
 persistGraph nodeManager graph =
     PersistentGraph
-    { pg_nodeData = nm_nodeToKey nodeManager
+    { pg_nodeData = getNodeMap nodeManager
     , pg_graphData = map (\(k, vals) -> (k, VU.toList vals)) (IM.toList $ g_adj graph)
     }
 

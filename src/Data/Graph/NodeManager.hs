@@ -3,9 +3,9 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE CPP #-}
 module Data.Graph.NodeManager
-    ( NodeManager (..), Node, NodeMap, NodeSet
+    ( NodeManager, Node, NodeMap, NodeSet
     , emptyNode
-    , initNodeManager, emptyNodeManager
+    , initNodeManager, emptyNodeManager, getNodeMap
     , getNodeHandle, getExistingNodeHandle, lookupNode, unsafeLookupNode
     , getNewNodesSince, keys, hasKey, nodes, toList
     , isConsistent
@@ -55,6 +55,9 @@ initNodeManager nm =
             | IM.null nm = 0
             | otherwise = 1 + fst (IM.findMax nm)
           invert im = HM.fromList . map swap $ IM.toList im
+
+getNodeMap :: (Hashable k, Eq k) => NodeManager k -> NodeMap k
+getNodeMap = nm_nodeToKey
 
 keys :: NodeManager k -> [k]
 keys nm =
