@@ -1,5 +1,5 @@
 name:                graph-core
-version:             0.2.0.1
+version:             0.2.0.2
 synopsis:            Fast, memory efficient and persistent graph implementation
 description:         A small package providing a powerful and easy to use Haskell graph implementation.
 homepage:            https://github.com/factisresearch/graph-core
@@ -43,7 +43,7 @@ test-suite graph-core-tests
                        QuickCheck >=2.6 && <2.7,
                        mtl >=2.1 && <2.2,
                        safecopy >=0.8 && <0.9,
-                       HTF >=0.11 && <0.12
+                       HTF >=0.11 && <0.13
   ghc-options: -Wall -fno-warn-orphans
 
 source-repository head
