@@ -4,7 +4,7 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE RecordWildCards #-}
-module Data.Graph
+module Data.Core.Graph
   ( Graph, Node, NodeSet, Edge(..)
   , empty, fromEdges, fromAdj, isConsistent
   , nodes, edges, children, parents, hasEdge
@@ -16,5 +16,5 @@ module Data.Graph
   )
 where
 
-import Data.Graph.NodeManager hiding (isConsistent, nodes)
-import Data.Graph.PureCore
+import Data.Core.Graph.NodeManager hiding (isConsistent, nodes)
+import Data.Core.Graph.PureCore

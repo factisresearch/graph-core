@@ -4,9 +4,9 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE RecordWildCards #-}
-module Data.Graph.PureCore where
+module Data.Core.Graph.PureCore where
 
-import Data.Graph.NodeManager hiding (nodes, isConsistent)
+import Data.Core.Graph.NodeManager hiding (nodes, isConsistent)
 
 import Control.Applicative hiding (empty)
 import Control.Arrow

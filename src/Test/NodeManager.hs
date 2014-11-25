@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -F -pgmF htfpp #-}
 module Test.NodeManager where
 
-import Data.Graph.NodeManager
+import Data.Core.Graph.NodeManager
 
 import Test.Framework
 import Control.Monad.State.Strict

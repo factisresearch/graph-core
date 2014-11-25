@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE CPP #-}
-module Data.Graph.NodeManager
+module Data.Core.Graph.NodeManager
     ( NodeManager, Node, NodeMap, NodeSet
     , emptyNode
     , initNodeManager, emptyNodeManager, getNodeMap

@@ -1,8 +1,8 @@
 {-# OPTIONS_GHC -F -pgmF htfpp #-}
 module Test.Core where
 
-import Data.Graph.PureCore
-import Data.Graph.NodeManager (Node)
+import Data.Core.Graph.PureCore
+import Data.Core.Graph.NodeManager (Node)
 
 import Control.Monad
 import Test.Framework

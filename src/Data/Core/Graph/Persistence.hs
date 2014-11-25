@@ -1,13 +1,11 @@
-{-# LANGUAGE TemplateHaskell #-}
-module Data.Graph.Persistence
+module Data.Core.Graph.Persistence
   ( PersistentGraph, persistGraph, loadGraph )
 where
 
-import Data.Graph.PureCore
-import Data.Graph.NodeManager
+import Data.Core.Graph.PureCore
+import Data.Core.Graph.NodeManager
 
 import Data.Hashable
-import Data.SafeCopy
 import qualified Data.IntMap.Strict as IM
 import qualified Data.Vector.Unboxed as VU
 
@@ -27,6 +25,3 @@ persistGraph nodeManager graph =
 loadGraph :: (Eq k, Hashable k) => PersistentGraph k -> (NodeManager k, Graph)
 loadGraph (PersistentGraph nodeData graphData) =
     (initNodeManager nodeData, fromAdj graphData)
-
-$(deriveSafeCopy 1 'base ''PersistentGraph)
-$(deriveSafeCopy 1 'base ''Edge)

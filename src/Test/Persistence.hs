@@ -1,9 +1,9 @@
 {-# OPTIONS_GHC -F -pgmF htfpp #-}
 module Test.Persistence where
 
-import Data.Graph
-import Data.Graph.NodeManager
-import Data.Graph.Persistence
+import Data.Core.Graph
+import Data.Core.Graph.NodeManager
+import Data.Core.Graph.Persistence
 
 import Test.Framework
 
