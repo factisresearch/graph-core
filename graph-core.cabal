@@ -15,7 +15,7 @@ cabal-version:       >=1.8
 library
   exposed-modules:     Data.Core.Graph, Data.Core.Graph.NodeManager, Data.Core.Graph.Persistence
   other-modules:       Data.Core.Graph.PureCore
-  build-depends:       base >=4.6 && <4.8,
+  build-depends:       base >=4.6 && <5,
                        hashable >=1.2,
                        unordered-containers >=0.2,
                        containers >=0.5,
@@ -32,7 +32,7 @@ test-suite graph-core-tests
   hs-source-dirs:      src
   main-is:             Tests.hs
   other-modules:       Test.NodeManager, Test.Core, Test.Persistence
-  build-depends:       base >=4.6 && <4.8,
+  build-depends:       base >=4.6 && <5,
                        hashable >=1.2,
                        unordered-containers >=0.2,
                        containers >=0.5,
