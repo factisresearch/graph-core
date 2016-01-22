@@ -16,7 +16,6 @@ where
 import Control.Monad.State.Strict
 import Data.Hashable
 import Data.Maybe
-import Test.QuickCheck (NonNegative(..), Arbitrary(..))
 import qualified Data.HashMap.Strict as HM
 import qualified Data.IntMap.Strict as IM
 import qualified Data.IntSet as IS
@@ -110,6 +109,3 @@ lookupNode i (NodeManager{..}) = IM.lookup i nm_nodeToKey
 
 unsafeLookupNode :: Node -> NodeManager k -> k
 unsafeLookupNode i nm = fromJust $ lookupNode i nm
-
-instance Arbitrary v => Arbitrary (IM.IntMap v) where
-    arbitrary = fmap (IM.fromList . map (\(NonNegative i, x) -> (i, x))) arbitrary

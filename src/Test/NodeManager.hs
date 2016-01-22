@@ -3,6 +3,7 @@ module Test.NodeManager where
 
 import Data.Core.Graph.NodeManager
 
+import Test.Arbitrary
 import Test.Framework
 import Control.Monad.State.Strict
 import qualified Data.IntMap.Strict as IM
@@ -11,8 +12,8 @@ import qualified Data.List as L
 assertConsistent :: StateT (NodeManager Char) IO ()
 assertConsistent = get >>= liftIO . assertEqual True . isConsistent
 
-prop_init :: NodeMap String -> Property
-prop_init m = uniqueValues m && all (>=0) (IM.keys m)
+prop_init :: TestNodeMap String -> Property
+prop_init (TestNodeMap m) = uniqueValues m && all (>=0) (IM.keys m)
         ==> isConsistent new && m == getNodeMap new
     where new = initNodeManager m
           uniqueValues im = IM.size im == length (L.nub $ IM.elems im)

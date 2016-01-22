@@ -5,6 +5,7 @@ import Data.Core.Graph.PureCore
 import Data.Core.Graph.NodeManager (Node)
 
 import Control.Monad
+import Test.Arbitrary ()
 import Test.Framework
 import qualified Data.IntSet as IS
 

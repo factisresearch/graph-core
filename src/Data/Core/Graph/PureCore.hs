@@ -18,7 +18,6 @@ import Data.Function (on)
 import Data.Hashable
 import Data.Maybe
 import Data.STRef
-import Test.QuickCheck
 import qualified Data.Foldable as F
 import qualified Data.HashSet as HS
 import qualified Data.IntMap.Strict as IM
@@ -191,13 +190,3 @@ hullFoldImpl adj f initial root =
           else do newAcc <- f acc x
                   let succs = IM.findWithDefault VU.empty x adj
                   go (IS.insert x visited) newAcc (xs ++ VU.toList succs)
-
-instance Arbitrary Graph where
-    arbitrary = frequency [(1, return empty), (20, denseGraph)]
-        where denseGraph =
-                do n <- choose (0, 30::Int)
-                   let nodeList = [1..n]
-                   adj <- forM nodeList $ \i ->
-                            do bits <- vectorOf n arbitrary
-                               return (i, [ x | (x,b) <- zip nodeList bits, b ])
-                   return $ fromAdj adj
