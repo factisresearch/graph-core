@@ -1,14 +1,31 @@
-Haskell package: graph-core
+graph-core
 =====
 
-[![Build Status](https://travis-ci.org/factisresearch/graph-core.svg)](https://travis-ci.org/factisresearch/graph-core)
+[![Build Status](https://travis-ci.org/factisresearch/graph-core.git.svg)](https://travis-ci.org/factisresearch/graph-core.git)
+[![Hackage](https://img.shields.io/hackage/v/graph-core.svg)](http://hackage.haskell.org/package/graph-core)
 
-A small package providing a powerful and easy to use Haskell graph implementation.
+## Intro
 
-Hackage: [graph-core](https://hackage.haskell.org/package/graph-core)
+Hackage: [graph-core](http://hackage.haskell.org/package/graph-core)
+Stackage: [graph-core](https://www.stackage.org/package/graph-core)
 
-# Install
+Fast, memory efficient and persistent graph implementation
 
-* From Source: `git clone https://github.com/factisresearch/graph-core.git
-  && cd graph-core && cabal install`
-* From Hackage `cabal install graph-core`
+
+## Install
+
+* Using cabal: `cabal install graph-core`
+* Using Stack: `stack install graph-core`
+* From Source (cabal): `git clone https://github.com/factisresearch/graph-core.git.git && cd graph-core.git && cabal install`
+* From Source (stack): `git clone https://github.com/factisresearch/graph-core.git.git && cd graph-core.git && stack build`
+
+
+## Misc
+
+### Supported GHC Versions
+
+
+### License
+
+Released under the MIT license.
+(c) 2014 - 2016 factis research GmbH
