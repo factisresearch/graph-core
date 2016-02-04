@@ -11,6 +11,8 @@ cabal-dev
 .cabal-sandbox/
 cabal.sandbox.config
 cabal.config
+.HTF/
+.stack-work/
 
 ## OS X
 .DS_Store
