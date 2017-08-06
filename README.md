@@ -1,6 +1,8 @@
 graph-core
 =====
 
+**NOTE**: This repository has moved. You can find it at <https://github.com/factisresearch/opensource-mono>
+
 [![Build Status](https://travis-ci.org/factisresearch/graph-core.git.svg)](https://travis-ci.org/factisresearch/graph-core.git)
 [![Hackage](https://img.shields.io/hackage/v/graph-core.svg)](http://hackage.haskell.org/package/graph-core)
 
